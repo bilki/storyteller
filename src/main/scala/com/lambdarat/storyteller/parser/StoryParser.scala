@@ -16,7 +16,7 @@ object StoryParser {
       stringCI(And.word).as(And)
   }
 
-  val step: Parser[Step] = (keyword <~ char(' '), takeText).mapN(Step.apply)
+  val step: Parser[Step] = (keyword <~ char(' '), takeWhile(_ != '\n')).mapN(Step.apply)
 
   val story: Parser[Story] = sepBy1(step, char('\n')).map(Story.apply)
 

@@ -55,10 +55,12 @@ class StoryParserSpec extends AnyFlatSpec with Matchers {
     val storyText =
       """Given a random Person
         |When previous Person name starts with P
+        |Then send a congratulation email
         |""".stripMargin
     val expected = Story(NonEmptyList.of(
       Step(Given, "a random Person"),
-      Step(When, "previous Person name starts with P"))
+      Step(When, "previous Person name starts with P"),
+      Step(Then, "send a congratulation email"))
     ).asRight[String]
     val parsed = StoryParser.story.parseOnly(storyText).either
 

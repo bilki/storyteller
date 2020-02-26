@@ -2,7 +2,7 @@ package com.lambdarat.storyteller.app
 
 import com.lambdarat.storyteller.core.StoryGenerator
 import com.lambdarat.storyteller.domain.Story
-import com.lambdarat.storyteller.parser.StoryParser
+import com.lambdarat.storyteller.parser.{StoryParser, StoryParserLive}
 import com.lambdarat.storyteller.reader.StoryReader
 import com.lambdarat.storyteller.writer.StoryWriter
 
@@ -29,10 +29,7 @@ object Storyteller extends DefaultRuntime {
 
     type Dependencies = StoryParser with StoryGenerator
 
-    val dependencies: Dependencies = new StoryParser with StoryGenerator {
-      override def parseStory(text: String, name: String): ParseResult[Story] =
-        StoryParser.parseStory(text, name)
-
+    val dependencies: Dependencies = new StoryParserLive with StoryGenerator {
       override def generateStoryAST(story: Story, basePackage: String, testName: String): Source =
         StoryGenerator.generateStoryAST(story, basePackage, testName)
     }

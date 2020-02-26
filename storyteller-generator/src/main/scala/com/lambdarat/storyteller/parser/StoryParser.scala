@@ -1,6 +1,7 @@
 package com.lambdarat.storyteller.parser
 
 import com.lambdarat.storyteller.domain.{Keyword, Step, Story}
+import com.lambdarat.storyteller.parser.StoryParser.steps
 
 import atto.Atto._
 import atto._
@@ -8,10 +9,14 @@ import cats.data.NonEmptyList
 import cats.implicits._
 
 trait StoryParser {
-  def parseStory(text: String, name: String): ParseResult[Story]
+  val storyParser: StoryParser.Service
 }
 
-object StoryParser extends StoryParser {
+object StoryParser {
+
+  trait Service {
+    def parseStory(text: String, name: String): ParseResult[Story]
+  }
 
   private[parser] val keyword: Parser[Keyword] = {
     import Keyword._
@@ -26,8 +31,11 @@ object StoryParser extends StoryParser {
     (keyword <~ char(' '), takeWhile(_ != '\n')).mapN(Step.apply)
 
   private[parser] val steps: Parser[NonEmptyList[Step]] = sepBy1(step, char('\n'))
+}
 
-  def parseStory(text: String, name: String): ParseResult[Story] =
-    steps.parseOnly(text).map(Story(name, _))
-
+trait StoryParserLive extends StoryParser {
+  final val storyParser: StoryParser.Service = new StoryParser.Service {
+    override def parseStory(text: String, name: String): ParseResult[Story] =
+      steps.parseOnly(text).map(Story(name, _))
+  }
 }

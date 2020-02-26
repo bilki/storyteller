@@ -7,7 +7,11 @@ import atto._
 import cats.data.NonEmptyList
 import cats.implicits._
 
-object StoryParser {
+trait StoryParser {
+  def parseStory(text: String, name: String): ParseResult[Story]
+}
+
+object StoryParser extends StoryParser {
 
   private[parser] val keyword: Parser[Keyword] = {
     import Keyword._

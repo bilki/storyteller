@@ -74,9 +74,10 @@ object StorytellerPlugin extends AutoPlugin {
   private def srcGenTask(targetDir: File, cacheDir: File): Set[File] => Set[File] =
     FileFunction.cached(cacheDir, FilesInfo.lastModified, FilesInfo.exists) {
       inputFiles: Set[File] =>
-        Storyteller.generateStoryFiles(
+        Storyteller.generateStoriesSourceFiles(
           inputFiles.filter(_.name.endsWith(defaultStoryExtension)),
-          targetDir
+          targetDir,
+          defaultStoryExtension
         )
     }
 

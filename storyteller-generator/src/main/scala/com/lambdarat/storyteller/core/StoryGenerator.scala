@@ -12,15 +12,15 @@ trait StoryGenerator {
 
 object StoryGenerator extends StoryGenerator {
 
-  def toCamelCase(words: NonEmptyList[String]): String =
+  private[core] def toCamelCase(words: NonEmptyList[String]): String =
     (words.head +: words.tail.map(_.capitalize)).mkString
 
-  def generateFunForStep(step: Step): Stat = {
+  private[core] def generateFunForStep(step: Step): Stat = {
     val maybeWords = NonEmptyList.fromList(step.text.split(" ").toList)
 
     val funName = maybeWords.fold(s"random-${System.currentTimeMillis}")(toCamelCase)
 
-    q"def ${Term.Name(funName)}(): F[_]"
+    q"def ${Term.Name(funName)}(): Unit"
   }
 
   def generateStoryAST(story: Story, testName: String): Source = {
@@ -30,7 +30,7 @@ object StoryGenerator extends StoryGenerator {
       import org.scalatest.flatspec.AnyFlatSpec
       import org.scalatest.matchers.should.Matchers
 
-      class ${Type.Name(testName)} extends AnyFlatSpec with Matchers {
+      abstract class ${Type.Name(testName)} extends AnyFlatSpec with Matchers {
         ..$stepsFuns
       }
     """

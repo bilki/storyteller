@@ -14,18 +14,25 @@ import zio._
 
 object StoryReader {
 
-  def parseStories(storyFiles: Seq[File]): IO[StorytellerError, List[Story]] =
-    IO.foreach(storyFiles)(parseStory)
+  def parseStories(
+      storyFiles: Seq[File],
+      storySuffix: String
+  ): ZIO[StoryParser, StorytellerError, List[Story]] =
+    ZIO.foreach(storyFiles)(parseStory(storySuffix))
 
-  def parseStory(storyFile: File): IO[StorytellerError, Story] = {
+  def parseStory(
+      storySuffix: String
+  )(storyFile: File): ZIO[StoryParser, StorytellerError, Story] = {
     val openStory = IO(Source.fromFile(storyFile)) <> IO.fail(ErrorOpeningStory(storyFile.getPath))
     val readStory = (source: BufferedSource) =>
       IO(source.mkString) <> IO.fail(ErrorOpeningStory(storyFile.getPath))
     val closeStoryFile = (source: BufferedSource) => UIO.succeed(source.close)
+    val cleanStoryName = storyFile.getName.replace(storySuffix, "")
 
     for {
-      storyText <- openStory.bracket(closeStoryFile, readStory)
-      story     <- StoryParser.parseStory(storyText, storyFile.getName).result(storyText)
+      storyText   <- openStory.bracket(closeStoryFile, readStory)
+      parseResult <- ZIO.access[StoryParser](_.parseStory(storyText, cleanStoryName))
+      story       <- parseResult.result(cleanStoryName)
     } yield story
   }
 

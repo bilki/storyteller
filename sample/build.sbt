@@ -3,5 +3,6 @@ lazy val sample = (project in file("."))
   .settings(
     name := "sample",
     version := "1.0.0",
-    sourceGenerators in Compile += (storytellerSrcGen in Compile).taskValue,
+    sourceGenerators in Test += (storytellerSrcGen in Compile).taskValue,
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0"
   )

@@ -1,13 +1,15 @@
 package com.lambdarat.storyteller.parser
 
+import com.lambdarat.storyteller.domain.{Keyword, Step, Story}
+
 import atto.Atto._
 import atto._
+import cats.data.NonEmptyList
 import cats.implicits._
-import com.lambdarat.storyteller.domain.{Keyword, Step, Story}
 
 object StoryParser {
 
-  val keyword: Parser[Keyword] = {
+  private[parser] val keyword: Parser[Keyword] = {
     import Keyword._
 
     stringCI(Given.word).as(Given) |
@@ -16,10 +18,12 @@ object StoryParser {
       stringCI(And.word).as(And)
   }
 
-  val step: Parser[Step] = (keyword <~ char(' '), takeWhile(_ != '\n')).mapN(Step.apply)
+  private[parser] val step: Parser[Step] =
+    (keyword <~ char(' '), takeWhile(_ != '\n')).mapN(Step.apply)
 
-  def story(name: String): Parser[Story] = sepBy1(step, char('\n')).map(Story(name, _))
+  private[parser] val steps: Parser[NonEmptyList[Step]] = sepBy1(step, char('\n'))
 
-  def parse(text: String, name: String): ParseResult[Story] = story(name).parseOnly(text)
+  def parseStory(text: String, name: String): ParseResult[Story] =
+    steps.parseOnly(text).map(Story(name, _))
 
 }

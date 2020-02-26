@@ -1,7 +1,7 @@
 package com.lambdarat.storyteller.parser
 
 import com.lambdarat.storyteller.domain.Keyword.{And, Given, Then, When}
-import com.lambdarat.storyteller.domain.{Step, Story}
+import com.lambdarat.storyteller.domain.Step
 
 import atto.Atto._
 import cats.data.NonEmptyList
@@ -43,10 +43,10 @@ class StoryParserSpec extends AnyFlatSpec with Matchers {
     parsed shouldBe expected
   }
 
-  "Story parser" should "parse single step" in {
+  "Steps parser" should "parse single step" in {
     val storyText = "Given a random Person"
-    val expected = Story("Story One", NonEmptyList.of(Step(Given, "a random Person"))).asRight[String]
-    val parsed = StoryParser.story("Story One").parseOnly(storyText).either
+    val expected = NonEmptyList.of(Step(Given, "a random Person")).asRight[String]
+    val parsed = StoryParser.steps.parseOnly(storyText).either
 
     parsed shouldBe expected
   }
@@ -57,12 +57,12 @@ class StoryParserSpec extends AnyFlatSpec with Matchers {
         |When previous Person name starts with P
         |Then send a congratulation email
         |""".stripMargin
-    val expected = Story("Story Two", NonEmptyList.of(
+    val expected = NonEmptyList.of(
       Step(Given, "a random Person"),
       Step(When, "previous Person name starts with P"),
-      Step(Then, "send a congratulation email"))
+      Step(Then, "send a congratulation email")
     ).asRight[String]
-    val parsed = StoryParser.story("Story Two").parseOnly(storyText).either
+    val parsed = StoryParser.steps.parseOnly(storyText).either
 
     parsed shouldBe expected
   }

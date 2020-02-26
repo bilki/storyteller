@@ -25,7 +25,7 @@ object StoryReader {
 
     for {
       storyText <- openStory.bracket(closeStoryFile, readStory)
-      story     <- StoryParser.parse(storyText, storyFile.getName).result(storyText)
+      story     <- StoryParser.parseStory(storyText, storyFile.getName).result(storyText)
     } yield story
   }
 

@@ -1,5 +1,6 @@
 package com.lambdarat.storyteller.app
 
+import com.lambdarat.storyteller.core.StoryGenerator
 import com.lambdarat.storyteller.reader.StoryReader
 import com.lambdarat.storyteller.writer.StoryWriter
 
@@ -15,7 +16,10 @@ object Storyteller extends DefaultRuntime {
       generated <- StoryWriter.writeStories(targetFolder, stories)
     } yield generated
 
-    unsafeRun(generation)
+    val generationWithDependencies = generation
+      .provide(StoryGenerator)
+
+    unsafeRun(generationWithDependencies)
   }
 
 }

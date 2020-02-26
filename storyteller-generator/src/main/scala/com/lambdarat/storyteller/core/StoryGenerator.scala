@@ -6,7 +6,11 @@ import cats.data.NonEmptyList
 
 import scala.meta._
 
-object StoryGenerator {
+trait StoryGenerator {
+  def generateStoryAST(story: Story, testName: String): Source
+}
+
+object StoryGenerator extends StoryGenerator {
 
   def toCamelCase(words: NonEmptyList[String]): String =
     (words.head +: words.tail.map(_.capitalize)).mkString

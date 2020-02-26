@@ -25,9 +25,10 @@ object StorytellerPlugin extends AutoPlugin {
       )
 
     lazy val storytellerSrcGenStoriesTargetDir: SettingKey[File] =
-      settingKey[File](
-        "Target directory where stories will be copied"
-      )
+      settingKey[File]("Target directory where stories will be copied")
+
+    lazy val storytellerSrcGenBasePackage: SettingKey[String] =
+      settingKey[String]("Base package for generated spec files")
   }
 
   import autoImport._
@@ -39,7 +40,8 @@ object StorytellerPlugin extends AutoPlugin {
   lazy val defaultSettings: Seq[Def.Setting[_]] = Seq(
     storytellerSrcGenSourceDirs := Seq((resourceDirectory in Test).value / defaultStoriesFolder),
     storytellerSrcGenTargetDir := (sourceManaged in Test).value,
-    storytellerSrcGenStoriesTargetDir := (sourceManaged in Test).value / defaultStoriesFolder
+    storytellerSrcGenStoriesTargetDir := (sourceManaged in Test).value / defaultStoriesFolder,
+    storytellerSrcGenBasePackage := s"${organization.value}.storyteller"
   )
 
   lazy val taskSettings: Seq[Def.Setting[_]] = {
@@ -63,7 +65,8 @@ object StorytellerPlugin extends AutoPlugin {
           Def.task {
             srcGenTask(
               storytellerSrcGenTargetDir.value,
-              target.value / "srcgen"
+              target.value / "srcgen",
+              storytellerSrcGenBasePackage.value
             )(storytellerSrcGenStoriesTargetDir.value.allPaths.get.toSet).toSeq
           }
         )
@@ -71,13 +74,18 @@ object StorytellerPlugin extends AutoPlugin {
     )
   }
 
-  private def srcGenTask(targetDir: File, cacheDir: File): Set[File] => Set[File] =
+  private def srcGenTask(
+      targetDir: File,
+      cacheDir: File,
+      basePackage: String
+  ): Set[File] => Set[File] =
     FileFunction.cached(cacheDir, FilesInfo.lastModified, FilesInfo.exists) {
       inputFiles: Set[File] =>
         Storyteller.generateStoriesSourceFiles(
           inputFiles.filter(_.name.endsWith(defaultStoryExtension)),
           targetDir,
-          defaultStoryExtension
+          defaultStoryExtension,
+          basePackage
         )
     }
 

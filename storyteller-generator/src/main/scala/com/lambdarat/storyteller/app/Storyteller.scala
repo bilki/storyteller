@@ -19,11 +19,12 @@ object Storyteller extends DefaultRuntime {
   def generateStoriesSourceFiles(
       storyFiles: Set[File],
       targetFolder: File,
-      storySuffix: String
+      storySuffix: String,
+      basePackage: String
   ): Set[File] = {
     val generation = for {
       stories   <- StoryReader.parseStories(storyFiles.toSeq, storySuffix)
-      generated <- StoryWriter.writeStories(targetFolder, stories)
+      generated <- StoryWriter.writeStories(targetFolder, stories, basePackage)
     } yield generated
 
     type Dependencies = StoryParser with StoryGenerator
@@ -32,8 +33,8 @@ object Storyteller extends DefaultRuntime {
       override def parseStory(text: String, name: String): ParseResult[Story] =
         StoryParser.parseStory(text, name)
 
-      override def generateStoryAST(story: Story, testName: String): Source =
-        StoryGenerator.generateStoryAST(story, testName)
+      override def generateStoryAST(story: Story, basePackage: String, testName: String): Source =
+        StoryGenerator.generateStoryAST(story, basePackage, testName)
     }
 
     val generationWithDependencies = generation

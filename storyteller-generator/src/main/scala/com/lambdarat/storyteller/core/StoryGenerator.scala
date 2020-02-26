@@ -7,7 +7,7 @@ import cats.data.NonEmptyList
 import scala.meta._
 
 trait StoryGenerator {
-  def generateStoryAST(story: Story, testName: String): Source
+  def generateStoryAST(story: Story, basePackage: String, testName: String): Source
 }
 
 object StoryGenerator extends StoryGenerator {
@@ -23,10 +23,12 @@ object StoryGenerator extends StoryGenerator {
     q"def ${Term.Name(funName)}(): Unit"
   }
 
-  def generateStoryAST(story: Story, testName: String): Source = {
+  def generateStoryAST(story: Story, basePackage: String, testName: String): Source = {
     val stepsFuns = story.steps.map(generateFunForStep).toList
 
     source"""
+      package ${Term.Name(basePackage)}
+
       import org.scalatest.flatspec.AnyFlatSpec
       import org.scalatest.matchers.should.Matchers
 

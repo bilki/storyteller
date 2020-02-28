@@ -3,13 +3,14 @@ package com.lambdarat.storyteller
 import com.lambdarat.storyteller.app.Storyteller
 
 import sbt.Keys._
+import sbt.plugins.JvmPlugin
 import sbt._
 
 import java.io.File
 
 object StorytellerPlugin extends AutoPlugin {
 
-  override def trigger: PluginTrigger = allRequirements
+  override def requires: Plugins = JvmPlugin
 
   object autoImport {
 

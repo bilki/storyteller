@@ -1,6 +1,4 @@
 import Dependencies._
-import sbt.Keys._
-import sbt._
 
 scalaVersion in ThisBuild   := "2.12.10"
 version in ThisBuild        := "0.1.0-SNAPSHOT"

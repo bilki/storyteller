@@ -3,13 +3,14 @@ package com.lambdarat.storyteller
 import com.lambdarat.storyteller.app.Storyteller
 
 import sbt.Keys._
+import sbt.plugins.JvmPlugin
 import sbt._
 
 import java.io.File
 
 object StorytellerPlugin extends AutoPlugin {
 
-  override def trigger: PluginTrigger = allRequirements
+  override def requires: Plugins = JvmPlugin
 
   object autoImport {
 
@@ -89,5 +90,7 @@ object StorytellerPlugin extends AutoPlugin {
         )
     }
 
-  override def projectSettings: Seq[Def.Setting[_]] = taskSettings
+  override def projectSettings: Seq[Def.Setting[_]] =
+    taskSettings ++ defaultSettings :+
+      (sourceGenerators in Test += (storytellerSrcGen in Compile).taskValue)
 }

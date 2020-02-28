@@ -90,5 +90,7 @@ object StorytellerPlugin extends AutoPlugin {
         )
     }
 
-  override def projectSettings: Seq[Def.Setting[_]] = taskSettings
+  override def projectSettings: Seq[Def.Setting[_]] =
+    taskSettings ++ defaultSettings :+
+      (sourceGenerators in Test += (storytellerSrcGen in Compile).taskValue)
 }

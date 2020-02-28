@@ -15,6 +15,4 @@ lazy val `storyteller-plugin` = project
 
 lazy val `storyteller-sample` = project
   .enablePlugins(StorytellerPlugin)
-  .settings(StorytellerPlugin.defaultSettings: _*)
-  .settings(sourceGenerators in Test += (storytellerSrcGen in Compile).taskValue)
   .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0")

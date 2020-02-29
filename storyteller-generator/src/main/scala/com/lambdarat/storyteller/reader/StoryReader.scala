@@ -31,7 +31,7 @@ object StoryReader {
 
     for {
       storyText   <- openStory.bracket(closeStoryFile, readStory)
-      parseResult <- ZIO.access[StoryParser](_.storyParser.parseStory(storyText, cleanStoryName))
+      parseResult <- StoryParser.parseStory(storyText, cleanStoryName)
       story       <- parseResult.result(cleanStoryName)
     } yield story
   }

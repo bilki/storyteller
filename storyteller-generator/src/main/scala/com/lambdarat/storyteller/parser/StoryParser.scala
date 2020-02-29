@@ -1,41 +1,21 @@
 package com.lambdarat.storyteller.parser
 
-import com.lambdarat.storyteller.domain.{Keyword, Step, Story}
-import com.lambdarat.storyteller.parser.StoryParser.steps
+import zio.ZIO
 
-import atto.Atto._
 import atto._
-import cats.data.NonEmptyList
-import cats.implicits._
+import com.lambdarat.storyteller.domain.Story
 
 trait StoryParser {
-  val storyParser: StoryParser.Service
+  val storyParser: StoryParser.Service[Any]
 }
 
 object StoryParser {
 
-  trait Service {
-    def parseStory(text: String, name: String): ParseResult[Story]
+  trait Service[R] {
+    def parseStory(text: String, name: String): ZIO[R, Nothing, ParseResult[Story]]
   }
 
-  private[parser] val keyword: Parser[Keyword] = {
-    import Keyword._
+  def parseStory(text: String, name: String): ZIO[StoryParser, Nothing, ParseResult[Story]] =
+    ZIO.accessM(_.storyParser.parseStory(text, name))
 
-    stringCI(Given.word).as(Given) |
-      stringCI(When.word).as(When) |
-      stringCI(Then.word).as(Then) |
-      stringCI(And.word).as(And)
-  }
-
-  private[parser] val step: Parser[Step] =
-    (keyword <~ char(' '), takeWhile(_ != '\n')).mapN(Step.apply)
-
-  private[parser] val steps: Parser[NonEmptyList[Step]] = sepBy1(step, char('\n'))
-}
-
-trait StoryParserLive extends StoryParser {
-  final val storyParser: StoryParser.Service = new StoryParser.Service {
-    override def parseStory(text: String, name: String): ParseResult[Story] =
-      steps.parseOnly(text).map(Story(name, _))
-  }
 }

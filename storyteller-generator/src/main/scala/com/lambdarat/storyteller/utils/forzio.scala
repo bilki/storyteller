@@ -11,8 +11,7 @@ object forzio {
 
   implicit class ParseResultOps[A](private val result: ParseResult[A]) {
     def result(story: String): IO[StorytellerError, A] =
-      result.either
-        .fold(parseErr => IO.fail(StorytellerError.ParsingError(story, parseErr)), IO.succeed)
+      IO.fromEither(result.either).mapError(StorytellerError.ParsingError(story, _))
   }
 
   implicit class NonEmmptyListOps[A](private val list: List[A]) {

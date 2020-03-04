@@ -6,15 +6,13 @@ import com.lambdarat.storyteller.parser.{StoryParser, StoryParserLive}
 import com.lambdarat.storyteller.reader.StoryReader
 import com.lambdarat.storyteller.writer.StoryWriter
 
-import atto.ParseResult
-
 import scala.meta.Source
 
 import java.io.File
 
-import zio.DefaultRuntime
+import zio.Runtime
 
-object Storyteller extends DefaultRuntime {
+object Storyteller {
 
   def generateStoriesSourceFiles(
       storyFiles: Set[File],
@@ -37,7 +35,7 @@ object Storyteller extends DefaultRuntime {
     val generationWithDependencies = generation
       .provide(dependencies)
 
-    unsafeRun(generationWithDependencies)
+    Runtime.default.unsafeRun(generationWithDependencies)
   }
 
 }

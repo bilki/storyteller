@@ -1,23 +1,25 @@
 package com.lambdarat.storyteller.parser
 
-import zio.UIO
+import com.lambdarat.storyteller.domain.{Keyword, Step, Story}
+import com.lambdarat.storyteller.parser.StoryParser.StoryParser
 
 import atto.Atto._
 import atto._
 import cats.data.NonEmptyList
 import cats.implicits._
-import com.lambdarat.storyteller.domain.{Keyword, Step, Story}
 
-trait StoryParserLive extends StoryParser {
-  import StoryParserLive._
-
-  final val storyParser: StoryParser.Service[Any] = new StoryParser.Service[Any] {
-    override def parseStory(text: String, name: String): UIO[ParseResult[Story]] =
-      UIO.succeed(steps.parseOnly(text).map(Story(name, _)))
-  }
-}
+import zio.ZLayer
+import zio.ZLayer.NoDeps
 
 object StoryParserLive {
+
+  val storyParserLayer: NoDeps[Nothing, StoryParser] = ZLayer.succeed(
+    new StoryParser.Service {
+      override def parseStory(text: String, name: String): ParseResult[Story] =
+        steps.parseOnly(text).map(Story(name, _))
+    }
+  )
+
   private[parser] val keyword: Parser[Keyword] = {
     import Keyword._
 

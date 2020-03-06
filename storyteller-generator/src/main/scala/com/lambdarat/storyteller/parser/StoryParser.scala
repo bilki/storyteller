@@ -1,21 +1,20 @@
 package com.lambdarat.storyteller.parser
 
-import zio.ZIO
-
-import atto._
 import com.lambdarat.storyteller.domain.Story
 
-trait StoryParser {
-  val storyParser: StoryParser.Service[Any]
-}
+import atto._
+
+import zio.{Has, ZIO}
 
 object StoryParser {
 
-  trait Service[R] {
-    def parseStory(text: String, name: String): ZIO[R, Nothing, ParseResult[Story]]
+  type StoryParser = Has[StoryParser.Service]
+
+  trait Service {
+    def parseStory(text: String, name: String): ParseResult[Story]
   }
 
   def parseStory(text: String, name: String): ZIO[StoryParser, Nothing, ParseResult[Story]] =
-    ZIO.accessM(_.storyParser.parseStory(text, name))
+    ZIO.access(_.get.parseStory(text, name))
 
 }

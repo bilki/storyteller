@@ -1,12 +1,9 @@
 package com.lambdarat.storyteller.app
 
-import com.lambdarat.storyteller.core.StoryGenerator
-import com.lambdarat.storyteller.domain.Story
-import com.lambdarat.storyteller.parser.{StoryParser, StoryParserLive}
-import com.lambdarat.storyteller.reader.StoryReader
-import com.lambdarat.storyteller.writer.StoryWriter
-
-import scala.meta.Source
+import com.lambdarat.storyteller.core.StoryGeneratorLive
+import com.lambdarat.storyteller.parser.StoryParserLive
+import com.lambdarat.storyteller.reader.{StoryReader, StoryReaderLive}
+import com.lambdarat.storyteller.writer.{StoryWriter, StoryWriterLive}
 
 import java.io.File
 
@@ -20,22 +17,17 @@ object Storyteller {
       storySuffix: String,
       basePackage: String
   ): Set[File] = {
+
     val generation = for {
-      stories   <- StoryReader.parseStories(storyFiles.toSeq, storySuffix)
+      stories   <- StoryReader.readStories(storyFiles.toSeq, storySuffix)
       generated <- StoryWriter.writeStories(targetFolder, stories, basePackage)
     } yield generated
 
-    type Dependencies = StoryParser with StoryGenerator
+    val writingLayer = StoryGeneratorLive.storyGenerator >>> StoryWriterLive.storyWriter
+    val readingLayer = StoryParserLive.storyParserLayer >>> StoryReaderLive.storyReader
+    val dependencies = writingLayer ++ readingLayer
 
-    val dependencies: Dependencies = new StoryParserLive with StoryGenerator {
-      override def generateStoryAST(story: Story, basePackage: String, testName: String): Source =
-        StoryGenerator.generateStoryAST(story, basePackage, testName)
-    }
-
-    val generationWithDependencies = generation
-      .provide(dependencies)
-
-    Runtime.default.unsafeRun(generationWithDependencies)
+    Runtime.default.unsafeRun(generation.provideLayer(dependencies))
   }
 
 }

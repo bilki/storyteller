@@ -13,14 +13,12 @@ object Storyteller {
 
   def generateStoriesSourceFiles(
       storyFiles: Set[File],
-      targetFolder: File,
-      storySuffix: String,
-      basePackage: String
+      config: StorytellerConfig
   ): Set[File] = {
 
     val generation = for {
-      stories   <- StoryReader.readStories(storyFiles.toSeq, storySuffix)
-      generated <- StoryWriter.writeStories(targetFolder, stories, basePackage)
+      stories   <- StoryReader.readStories(storyFiles.toSeq, config.storySuffix)
+      generated <- StoryWriter.writeStories(config.targetFolder, stories, config.basePackage)
     } yield generated
 
     val writingLayer = StoryGeneratorLive.storyGenerator >>> StoryWriterLive.storyWriter

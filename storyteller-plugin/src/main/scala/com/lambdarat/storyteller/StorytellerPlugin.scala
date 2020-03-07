@@ -1,10 +1,10 @@
 package com.lambdarat.storyteller
 
-import com.lambdarat.storyteller.app.Storyteller
+import com.lambdarat.storyteller.app.{Storyteller, StorytellerConfig}
 
 import sbt.Keys._
-import sbt.plugins.JvmPlugin
 import sbt._
+import sbt.plugins.JvmPlugin
 
 import java.io.File
 
@@ -27,6 +27,9 @@ object StorytellerPlugin extends AutoPlugin {
 
     lazy val storytellerSrcGenStoriesTargetDir: SettingKey[File] =
       settingKey[File]("Target directory where stories will be copied")
+
+    lazy val storytellerSrcGenDomainPackages: SettingKey[Seq[String]] =
+      settingKey[Seq[String]]("Packages from where domain types are imported")
 
     lazy val storytellerSrcGenBasePackage: SettingKey[String] =
       settingKey[String]("Base package for generated spec files")
@@ -67,7 +70,8 @@ object StorytellerPlugin extends AutoPlugin {
             srcGenTask(
               storytellerSrcGenTargetDir.value,
               target.value / "srcgen",
-              storytellerSrcGenBasePackage.value
+              storytellerSrcGenBasePackage.value,
+              storytellerSrcGenDomainPackages.value
             )(storytellerSrcGenStoriesTargetDir.value.allPaths.get.toSet).toSeq
           }
         )
@@ -78,15 +82,17 @@ object StorytellerPlugin extends AutoPlugin {
   private def srcGenTask(
       targetDir: File,
       cacheDir: File,
-      basePackage: String
+      basePackage: String,
+      domainPackages: Seq[String]
   ): Set[File] => Set[File] =
     FileFunction.cached(cacheDir, FilesInfo.lastModified, FilesInfo.exists) {
       inputFiles: Set[File] =>
+        val config =
+          StorytellerConfig(targetDir, defaultStoryExtension, basePackage, domainPackages)
+
         Storyteller.generateStoriesSourceFiles(
           inputFiles.filter(_.name.endsWith(defaultStoryExtension)),
-          targetDir,
-          defaultStoryExtension,
-          basePackage
+          config
         )
     }
 

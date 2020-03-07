@@ -1,8 +1,8 @@
 package com.lambdarat.storyteller.writer
 
 import com.lambdarat.storyteller.core.StoryGenerator.StoryGenerator
-import com.lambdarat.storyteller.core.{StoryGenerator, StorytellerError}
 import com.lambdarat.storyteller.core.StorytellerError.ErrorGeneratingSourceFiles
+import com.lambdarat.storyteller.core.{StoryGenerator, StorytellerError}
 import com.lambdarat.storyteller.domain.Story
 import com.lambdarat.storyteller.writer.StoryWriter.{Service, StoryWriter}
 

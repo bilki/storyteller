@@ -4,10 +4,11 @@ import com.lambdarat.storyteller.domain.Keyword.{And, Given, Then, When}
 import com.lambdarat.storyteller.domain.Step
 
 import atto.Atto._
-import cats.data.NonEmptyList
-import cats.syntax.either._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
+import cats.data.NonEmptyList
+import cats.syntax.either._
 
 class StoryParserLiveSpec extends AnyFlatSpec with Matchers {
 

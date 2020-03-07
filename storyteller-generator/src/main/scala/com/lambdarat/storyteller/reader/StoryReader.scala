@@ -5,7 +5,7 @@ import com.lambdarat.storyteller.domain.Story
 
 import java.io.File
 
-import zio._
+import zio.{Has, IO, ZIO}
 
 object StoryReader {
 

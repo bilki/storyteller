@@ -16,3 +16,8 @@ lazy val `storyteller-plugin` = project
 lazy val `storyteller-sample` = project
   .enablePlugins(StorytellerPlugin)
   .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0")
+  .settings(
+    storytellerSrcGenDomainPackages := Seq(
+      "com.lambdarat.storyteller.sample.domain"
+    )
+  )

@@ -12,13 +12,10 @@ object StoryReader {
   type StoryReader = Has[StoryReader.Service]
 
   trait Service {
-    def readStories(storyFiles: Seq[File], storySuffix: String): IO[StorytellerError, List[Story]]
+    def readStories(storyFiles: Seq[File]): IO[StorytellerError, List[Story]]
   }
 
-  def readStories(
-      storyFiles: Seq[File],
-      storySuffix: String
-  ): ZIO[StoryReader, StorytellerError, List[Story]] =
-    ZIO.accessM(_.get.readStories(storyFiles, storySuffix))
+  def readStories(storyFiles: Seq[File]): ZIO[StoryReader, StorytellerError, List[Story]] =
+    ZIO.accessM(_.get.readStories(storyFiles))
 
 }

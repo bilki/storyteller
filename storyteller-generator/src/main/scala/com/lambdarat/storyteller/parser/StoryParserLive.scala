@@ -5,6 +5,7 @@ import com.lambdarat.storyteller.parser.StoryParser.StoryParser
 
 import atto.Atto._
 import atto._
+
 import cats.data.NonEmptyList
 import cats.implicits._
 
@@ -13,7 +14,7 @@ import zio.ZLayer.NoDeps
 
 object StoryParserLive {
 
-  val storyParserLayer: NoDeps[Nothing, StoryParser] = ZLayer.succeed(
+  val storyParser: NoDeps[Nothing, StoryParser] = ZLayer.succeed(
     new StoryParser.Service {
       override def parseStory(text: String, name: String): ParseResult[Story] =
         steps.parseOnly(text).map(Story(name, _))

@@ -15,15 +15,17 @@ import java.io.File
 
 import zio.{Has, IO, UIO, ZIO, ZLayer}
 
-object StoryReaderLive {
+object StoryReaderImpl {
 
-  val storyReader: ZLayer[StoryParser with Has[StorytellerConfig], Nothing, StoryReader] =
-    ZLayer.fromFunction { storyParserWithConfig =>
+  type StoryReaderDeps = StoryParser with Has[StorytellerConfig]
+
+  val storyReader: ZLayer[StoryReaderDeps, Nothing, StoryReader] =
+    ZLayer.fromFunction { storyParserDeps =>
       new StoryReader.Service {
-        val fileStoryReader = new FileStoryReader(storyParserWithConfig.get[StorytellerConfig])
+        val fileStoryReader = new FileStoryReader(storyParserDeps.get[StorytellerConfig])
 
         override def readStories(storyFiles: Seq[File]): IO[StorytellerError, List[Story]] =
-          fileStoryReader.readStories(storyFiles).provide(storyParserWithConfig)
+          fileStoryReader.readStories(storyFiles).provide(storyParserDeps)
       }
     }
 

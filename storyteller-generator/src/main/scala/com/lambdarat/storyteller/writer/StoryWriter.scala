@@ -12,18 +12,10 @@ object StoryWriter {
   type StoryWriter = Has[StoryWriter.Service]
 
   trait Service {
-    def writeStories(
-        targetFolder: File,
-        stories: List[Story],
-        basePackage: String
-    ): IO[StorytellerError, Set[File]]
+    def writeStories(stories: List[Story]): IO[StorytellerError, Set[File]]
   }
 
-  def writeStories(
-      targetFolder: File,
-      stories: List[Story],
-      basePackage: String
-  ): ZIO[StoryWriter, StorytellerError, Set[File]] =
-    ZIO.accessM(_.get.writeStories(targetFolder, stories, basePackage))
+  def writeStories(stories: List[Story]): ZIO[StoryWriter, StorytellerError, Set[File]] =
+    ZIO.accessM(_.get.writeStories(stories))
 
 }

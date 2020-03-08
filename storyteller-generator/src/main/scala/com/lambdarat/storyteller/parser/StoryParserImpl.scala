@@ -12,7 +12,7 @@ import cats.implicits._
 import zio.ZLayer
 import zio.ZLayer.NoDeps
 
-object StoryParserLive {
+object StoryParserImpl {
 
   val storyParser: NoDeps[Nothing, StoryParser] = ZLayer.succeed(
     new StoryParser.Service {

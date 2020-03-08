@@ -9,12 +9,12 @@ import scala.meta._
 
 import zio.ZLayer
 
-object StoryGeneratorLive {
+object StoryGeneratorImpl {
 
   val storyGenerator: ZLayer.NoDeps[Nothing, StoryGenerator] = ZLayer.succeed(
     new StoryGenerator.Service {
       override def generateStoryAST(story: Story, basePackage: String, testName: String): Source =
-        StoryGeneratorLive.generateStoryAST(story, basePackage, testName)
+        StoryGeneratorImpl.generateStoryAST(story, basePackage, testName)
     }
   )
 
@@ -29,7 +29,11 @@ object StoryGeneratorLive {
     q"def ${Term.Name(funName)}(): Unit"
   }
 
-  def generateStoryAST(story: Story, basePackage: String, testName: String): Source = {
+  private[core] def generateStoryAST(
+      story: Story,
+      basePackage: String,
+      testName: String
+  ): Source = {
     val stepsFuns = story.steps.map(generateFunForStep).toList
 
     source"""

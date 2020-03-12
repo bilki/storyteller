@@ -42,7 +42,7 @@ object StoryWriterImpl {
 
       for {
         createdFile <- createFile <> IO.fail(ErrorGeneratingSourceFiles(story.name))
-        source      <- StoryGenerator.generateStoryAST(story, config.basePackage, cleanStoryName)
+        source      <- StoryGenerator.generateStoryAST(story, cleanStoryName)
         _           <- writeToFile(createdFile, source) <> IO.fail(ErrorGeneratingSourceFiles(story.name))
       } yield createdFile.toFile
     }

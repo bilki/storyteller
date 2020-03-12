@@ -11,14 +11,10 @@ object StoryGenerator {
   type StoryGenerator = Has[StoryGenerator.Service]
 
   trait Service {
-    def generateStoryAST(story: Story, basePackage: String, testName: String): Source
+    def generateStoryAST(story: Story, testName: String): Source
   }
 
-  def generateStoryAST(
-      story: Story,
-      basePackage: String,
-      testName: String
-  ): ZIO[StoryGenerator, Nothing, Source] =
-    ZIO.access(_.get.generateStoryAST(story, basePackage, testName))
+  def generateStoryAST(story: Story, testName: String): ZIO[StoryGenerator, Nothing, Source] =
+    ZIO.access(_.get.generateStoryAST(story, testName))
 
 }

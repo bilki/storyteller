@@ -11,7 +11,7 @@ object ProjectPlugin extends AutoPlugin {
       "org.tpolecat" %% "atto-core"    % "0.7.0",
       "org.tpolecat" %% "atto-refined" % "0.7.0"
     )
-    lazy val zio = "dev.zio" %% "zio" % "1.0.0-RC18-1"
+    lazy val zio = "dev.zio" %% "zio" % "1.0.0-RC18-2"
 
   }
 

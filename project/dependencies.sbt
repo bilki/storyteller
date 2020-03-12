@@ -10,5 +10,5 @@ libraryDependencies ++= Seq(
   "org.scalameta" %% "scalameta"    % "4.3.0",
   "org.tpolecat"  %% "atto-core"    % "0.7.0",
   "org.tpolecat"  %% "atto-refined" % "0.7.0",
-  "dev.zio"       %% "zio"          % "1.0.0-RC18-1"
+  "dev.zio"       %% "zio"          % "1.0.0-RC18-2"
 )

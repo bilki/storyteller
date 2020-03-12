@@ -23,11 +23,11 @@ object Storyteller {
 
     val configLayer = ZLayer.succeed(config)
 
-    val generateLayer = StoryGeneratorImpl.storyGenerator ++ configLayer
+    val generateLayer = configLayer >>> StoryGeneratorImpl.storyGenerator.passthrough
     val writingLayer  = generateLayer >>> StoryWriterImpl.storyWriter
 
-    val parsingLayer = StoryParserImpl.storyParser ++ configLayer
-    val readingLayer = parsingLayer >>> StoryReaderImpl.storyReader
+    val parsingLayer = StoryParserImpl.storyParser
+    val readingLayer = configLayer ++ parsingLayer >>> StoryReaderImpl.storyReader
 
     val dependencies = writingLayer ++ readingLayer
 

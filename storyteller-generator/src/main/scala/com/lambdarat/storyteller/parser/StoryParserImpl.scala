@@ -9,12 +9,11 @@ import atto._
 import cats.data.NonEmptyList
 import cats.implicits._
 
-import zio.ZLayer
-import zio.ZLayer.NoDeps
+import zio.{Layer, ZLayer}
 
 object StoryParserImpl {
 
-  val storyParser: NoDeps[Nothing, StoryParser] = ZLayer.succeed(
+  val storyParser: Layer[Nothing, StoryParser] = ZLayer.succeed(
     new StoryParser.Service {
       override def parseStory(text: String, name: String): ParseResult[Story] =
         steps.parseOnly(text).map(Story(name, _))

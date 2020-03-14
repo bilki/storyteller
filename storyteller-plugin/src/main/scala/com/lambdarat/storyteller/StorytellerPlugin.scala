@@ -87,13 +87,26 @@ object StorytellerPlugin extends AutoPlugin {
   ): Set[File] => Set[File] =
     FileFunction.cached(cacheDir, FilesInfo.lastModified, FilesInfo.exists) {
       inputFiles: Set[File] =>
-        val config =
-          StorytellerConfig(targetDir, defaultStoryExtension, basePackage, domainPackages)
+        val configValidation =
+          StorytellerConfig.buildConfig(
+            targetDir,
+            defaultStoryExtension,
+            basePackage,
+            domainPackages
+          )
 
-        Storyteller.generateStoriesSourceFiles(
-          inputFiles.filter(_.name.endsWith(defaultStoryExtension)),
-          config
-        )
+        def filesGeneration(config: StorytellerConfig) =
+          Storyteller.generateStoriesSourceFiles(
+            inputFiles.filter(_.name.endsWith(defaultStoryExtension)),
+            config
+          )
+
+        val generationResult = for {
+          config <- configValidation
+          files  <- filesGeneration(config)
+        } yield files
+
+        generationResult.fold(err => sys.error(err.msg), identity)
     }
 
   override def projectSettings: Seq[Def.Setting[_]] =

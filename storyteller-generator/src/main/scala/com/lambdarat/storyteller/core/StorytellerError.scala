@@ -6,6 +6,11 @@ sealed abstract class StorytellerError(val msg: String) extends Exception
 
 object StorytellerError {
 
+  case class ErrorValidatingDomainPackages(packages: Seq[String], error: String)
+      extends StorytellerError(
+        s"[$error] happened while validating domain packages: [${packages.mkString(",\n")}]"
+      )
+
   case class FailureReadingResources(storiesFolder: String)
       extends StorytellerError(s"Failing while opening stories folder [$storiesFolder]")
 

@@ -4,8 +4,9 @@ import com.lambdarat.storyteller.app.StorytellerConfig
 import com.lambdarat.storyteller.core.StoryGenerator.StoryGenerator
 import com.lambdarat.storyteller.domain.{Step, Story}
 
-import cats.data.NonEmptyList
 import scala.meta._
+
+import cats.data.NonEmptyList
 
 import zio.{Has, ZLayer}
 
@@ -36,17 +37,21 @@ object StoryGeneratorImpl {
 
     def generateStoryAST(story: Story, testName: String): Source = {
       val stepsFuns = story.steps.map(generateFunForStep).toList
+      val imports   = config.domainPackages.toList
 
       source"""
-      package ${Term.Name(config.basePackage)}
+        package ${Term.Name(config.basePackage)}
 
-      import org.scalatest.flatspec.AnyFlatSpec
-      import org.scalatest.matchers.should.Matchers
+        import org.scalatest.flatspec.AnyFlatSpec
+        import org.scalatest.matchers.should.Matchers
 
-      abstract class ${Type.Name(testName)} extends AnyFlatSpec with Matchers {
-        ..$stepsFuns
-      }
-    """
+        import ..$imports
+
+        abstract class ${Type.Name(testName)} extends AnyFlatSpec with Matchers {
+          ..$stepsFuns
+        }
+      """
+
     }
 
   }

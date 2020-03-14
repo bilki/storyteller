@@ -14,7 +14,10 @@ object StoryGenerator {
     def generateStoryAST(story: Story, testName: String): Source
   }
 
-  def generateStoryAST(story: Story, testName: String): ZIO[StoryGenerator, Nothing, Source] =
+  def generateStoryAST(
+      story: Story,
+      testName: String
+  ): ZIO[StoryGenerator, StorytellerError, Source] =
     ZIO.access(_.get.generateStoryAST(story, testName))
 
 }

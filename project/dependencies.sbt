@@ -8,7 +8,10 @@ unmanagedSourceDirectories in Compile ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest"    % "3.1.0",
   "org.scalameta" %% "scalameta"    % "4.3.0",
+  "org.typelevel" %% "cats-core"    % "2.1.0",
   "org.tpolecat"  %% "atto-core"    % "0.7.0",
   "org.tpolecat"  %% "atto-refined" % "0.7.0",
   "dev.zio"       %% "zio"          % "1.0.0-RC18-2"
 )
+
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)

@@ -7,7 +7,10 @@ lazy val storyteller = (project in file("."))
   .aggregate(`storyteller-generator`, `storyteller-plugin`, `storyteller-sample`)
 
 lazy val `storyteller-generator` = project
-  .settings(libraryDependencies ++= Seq(scalaTest % Test, scalameta, zio) ++ atto)
+  .settings(
+    libraryDependencies ++= Seq(scalaTest % Test, scalameta, zio, cats) ++ atto,
+    kindProjector
+  )
 
 lazy val `storyteller-plugin` = project
   .enablePlugins(SbtPlugin)

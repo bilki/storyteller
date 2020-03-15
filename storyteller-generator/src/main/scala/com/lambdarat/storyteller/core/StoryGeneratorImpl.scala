@@ -25,12 +25,10 @@ object StoryGeneratorImpl {
   private[core] def toCamelCase(words: NonEmptyList[String]): String =
     (words.head +: words.tail.map(_.capitalize)).mkString
 
-  // Repaths importer to hold a wildcard importee (head is not expected to fail...)
-  private[core] def wildcardImporter(importer: Importer): Importer = {
+  // Repaths term to hold a wildcard importee
+  private[core] def wildcardImporter(select: Term.Select): Importer = {
     val wildcard = List(Importee.Wildcard())
-    val repath   = Term.Select(importer.ref, Term.Name(importer.importees.head.toString))
-
-    Importer(repath, wildcard)
+    Importer(select, wildcard)
   }
 
   private[core] class DefaultStoryGenerator(config: StorytellerConfig) {
@@ -48,7 +46,7 @@ object StoryGeneratorImpl {
       val imports   = config.domainPackages.map(wildcardImporter).toList
 
       source"""
-        package ${Term.Name(config.basePackage)}
+        package ${config.basePackage}
 
         import org.scalatest.flatspec.AnyFlatSpec
         import org.scalatest.matchers.should.Matchers

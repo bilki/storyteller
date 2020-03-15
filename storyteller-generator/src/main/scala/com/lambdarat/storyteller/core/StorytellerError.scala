@@ -6,6 +6,9 @@ sealed abstract class StorytellerError(val msg: String) extends Exception
 
 object StorytellerError {
 
+  case class ErrorValidatingBasePackage(pkg: String, error: String)
+      extends StorytellerError(s"[$error] happened while validating base package: [$pkg]")
+
   case class ErrorValidatingDomainPackages(packages: Seq[String], error: String)
       extends StorytellerError(
         s"[$error] happened while validating domain packages: [${packages.mkString(",\n")}]"

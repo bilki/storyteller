@@ -8,7 +8,7 @@ lazy val storyteller = (project in file("."))
 
 lazy val `storyteller-generator` = project
   .settings(
-    libraryDependencies ++= Seq(scalaTest % Test, scalameta, zio, cats) ++ atto,
+    libraryDependencies ++= Seq(scalatest % Test, scalameta, zio, cats) ++ atto,
     kindProjector
   )
 
@@ -18,7 +18,9 @@ lazy val `storyteller-plugin` = project
 
 lazy val `storyteller-sample` = project
   .enablePlugins(StorytellerPlugin)
-  .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0")
+  .settings(
+    libraryDependencies ++= Seq(scalatest % Test, scalacheck % Test)
+  )
   .settings(
     storytellerSrcGenDomainPackages := Seq(
       "com.lambdarat.storyteller.sample.domain"

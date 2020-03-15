@@ -36,15 +36,13 @@ object StoryWriterImpl {
     def writeStory(story: Story): ZIO[StoryGenerator, StorytellerError, File] = {
       val cleanStoryName = story.name.replaceAll(config.storySuffix, "")
       val storyFileName  = config.targetFolder.toPath.resolve(s"$cleanStoryName.scala")
-      val createFile     = IO(Files.createFile(storyFileName))
       def writeToFile(createdFile: Path, source: Source) =
         IO(Files.write(createdFile, source.syntax.getBytes))
 
       for {
-        createdFile <- createFile <> IO.fail(ErrorGeneratingSourceFiles(story.name))
-        source      <- StoryGenerator.generateStoryAST(story, cleanStoryName)
-        _           <- writeToFile(createdFile, source) <> IO.fail(ErrorGeneratingSourceFiles(story.name))
-      } yield createdFile.toFile
+        source <- StoryGenerator.generateStoryAST(story, cleanStoryName)
+        _      <- writeToFile(storyFileName, source) <> IO.fail(ErrorGeneratingSourceFiles(story.name))
+      } yield storyFileName.toFile
     }
 
   }

@@ -25,6 +25,14 @@ object StoryGeneratorImpl {
   private[core] def toCamelCase(words: NonEmptyList[String]): String =
     (words.head +: words.tail.map(_.capitalize)).mkString
 
+  // Repaths importer to hold a wildcard importee (head is not expected to fail...)
+  private[core] def wildcardImporter(importer: Importer): Importer = {
+    val wildcard = List(Importee.Wildcard())
+    val repath   = Term.Select(importer.ref, Term.Name(importer.importees.head.toString))
+
+    Importer(repath, wildcard)
+  }
+
   private[core] class DefaultStoryGenerator(config: StorytellerConfig) {
 
     def generateFunForStep(step: Step): Stat = {
@@ -37,7 +45,7 @@ object StoryGeneratorImpl {
 
     def generateStoryAST(story: Story, testName: String): Source = {
       val stepsFuns = story.steps.map(generateFunForStep).toList
-      val imports   = config.domainPackages.toList
+      val imports   = config.domainPackages.map(wildcardImporter).toList
 
       source"""
         package ${Term.Name(config.basePackage)}
